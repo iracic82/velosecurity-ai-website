@@ -1,26 +1,56 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Send, Mail, Phone, MapPin } from "lucide-react";
+import { Send, Mail, Phone, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 export function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    setStatus("loading");
+    setErrorMsg("");
+
+    const form = e.currentTarget;
+    const data = {
+      firstName: (form.elements.namedItem("firstName") as HTMLInputElement).value,
+      lastName: (form.elements.namedItem("lastName") as HTMLInputElement).value,
+      email: (form.elements.namedItem("email") as HTMLInputElement).value,
+      phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
+      company: (form.elements.namedItem("company") as HTMLInputElement).value,
+      jobTitle: (form.elements.namedItem("jobTitle") as HTMLInputElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error || "Something went wrong");
+      }
+
+      setStatus("success");
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : "Failed to send message. Please try again.");
+    }
   };
 
   return (
     <section id="contact" className="relative py-28 lg:py-36">
-      {/* Background effects */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/[0.03] rounded-full blur-[150px]" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent-secondary/[0.03] rounded-full blur-[120px]" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-5 gap-16 items-start">
-          {/* Left - Info (2 cols) */}
+          {/* Left - Info */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -52,12 +82,9 @@ export function Contact() {
                   value: "Available upon request",
                 },
               ].map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center gap-4 group"
-                >
+                <div key={item.label} className="flex items-center gap-4 group">
                   <div className="w-11 h-11 rounded-xl bg-accent/[0.08] border border-accent/10 flex items-center justify-center group-hover:border-accent/25 transition-colors">
-                    <item.icon className="w-4.5 h-4.5 text-accent" />
+                    <item.icon className="w-4 h-4 text-accent" />
                   </div>
                   <div>
                     <p className="text-xs text-muted uppercase tracking-wider font-semibold">
@@ -72,7 +99,7 @@ export function Contact() {
             </div>
           </motion.div>
 
-          {/* Right - Form (3 cols) */}
+          {/* Right - Form */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -80,7 +107,7 @@ export function Contact() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="lg:col-span-3"
           >
-            {submitted ? (
+            {status === "success" ? (
               <div className="p-10 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03] text-center">
                 <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-5">
                   <Send className="w-7 h-7 text-emerald-400" />
@@ -98,12 +125,20 @@ export function Contact() {
                 onSubmit={handleSubmit}
                 className="card-glow p-8 lg:p-10 rounded-2xl space-y-5"
               >
+                {status === "error" && (
+                  <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/[0.05] text-sm text-red-400">
+                    {errorMsg}
+                  </div>
+                )}
+
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    <label htmlFor="firstName" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                       First Name
                     </label>
                     <input
+                      id="firstName"
+                      name="firstName"
                       type="text"
                       required
                       className="input-field w-full px-4 py-3 rounded-xl text-sm"
@@ -111,10 +146,12 @@ export function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    <label htmlFor="lastName" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                       Last Name
                     </label>
                     <input
+                      id="lastName"
+                      name="lastName"
                       type="text"
                       required
                       className="input-field w-full px-4 py-3 rounded-xl text-sm"
@@ -125,10 +162,12 @@ export function Contact() {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    <label htmlFor="email" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                       Email
                     </label>
                     <input
+                      id="email"
+                      name="email"
                       type="email"
                       required
                       className="input-field w-full px-4 py-3 rounded-xl text-sm"
@@ -136,10 +175,12 @@ export function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    <label htmlFor="phone" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                       Phone
                     </label>
                     <input
+                      id="phone"
+                      name="phone"
                       type="tel"
                       className="input-field w-full px-4 py-3 rounded-xl text-sm"
                       placeholder="+1 (555) 000-0000"
@@ -149,20 +190,24 @@ export function Contact() {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    <label htmlFor="company" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                       Company Name
                     </label>
                     <input
+                      id="company"
+                      name="company"
                       type="text"
                       className="input-field w-full px-4 py-3 rounded-xl text-sm"
                       placeholder="Acme Corp"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                    <label htmlFor="jobTitle" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                       Job Title
                     </label>
                     <input
+                      id="jobTitle"
+                      name="jobTitle"
                       type="text"
                       className="input-field w-full px-4 py-3 rounded-xl text-sm"
                       placeholder="CTO"
@@ -171,10 +216,12 @@ export function Contact() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
+                  <label htmlFor="message" className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">
                     Message
                   </label>
                   <textarea
+                    id="message"
+                    name="message"
                     rows={4}
                     required
                     className="input-field w-full px-4 py-3 rounded-xl text-sm resize-none"
@@ -184,13 +231,18 @@ export function Contact() {
 
                 <button
                   type="submit"
-                  className="group relative w-full flex items-center justify-center gap-2 px-6 py-4 overflow-hidden rounded-xl font-display font-bold text-sm uppercase tracking-wider"
+                  disabled={status === "loading"}
+                  className="group relative w-full flex items-center justify-center gap-2 px-6 py-4 overflow-hidden rounded-xl font-display font-bold text-sm uppercase tracking-wider disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <span className="absolute inset-0 bg-gradient-to-r from-accent to-accent-secondary" />
                   <span className="relative text-background">
-                    Send Message
+                    {status === "loading" ? "Sending..." : "Send Message"}
                   </span>
-                  <Send className="relative w-4 h-4 text-background group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  {status === "loading" ? (
+                    <Loader2 className="relative w-4 h-4 text-background animate-spin" />
+                  ) : (
+                    <Send className="relative w-4 h-4 text-background group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  )}
                 </button>
               </form>
             )}
