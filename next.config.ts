@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/blog/the-linguistic-von-neumann-bottleneck",
+        destination: "/blog/you-cant-prompt-your-way-to-agent-security",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

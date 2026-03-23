@@ -222,3 +222,162 @@ body {
   text-transform: uppercase;
   color: var(--accent);
 }
+
+/* ─── BLOG PROSE ─── */
+.prose-velosecurity {
+  color: var(--foreground);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.prose-velosecurity h1 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.prose-velosecurity h2 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+}
+
+.prose-velosecurity h3 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+
+.prose-velosecurity p {
+  margin-bottom: 1.25rem;
+  color: var(--muted);
+}
+
+.prose-velosecurity strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.prose-velosecurity a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(0, 212, 255, 0.3);
+  transition: text-decoration-color 0.2s;
+}
+
+.prose-velosecurity a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.prose-velosecurity blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: var(--foreground);
+}
+
+.prose-velosecurity blockquote p {
+  color: var(--foreground);
+}
+
+.prose-velosecurity code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.875em;
+  background: rgba(0, 212, 255, 0.06);
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  color: var(--accent);
+}
+
+.prose-velosecurity pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.prose-velosecurity pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--foreground);
+  font-size: inherit;
+}
+
+.prose-velosecurity table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.prose-velosecurity thead {
+  border-bottom: 2px solid var(--accent);
+}
+
+.prose-velosecurity th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.prose-velosecurity td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.prose-velosecurity tbody tr:hover {
+  background: rgba(0, 212, 255, 0.02);
+}
+
+.prose-velosecurity ul, .prose-velosecurity ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.prose-velosecurity li {
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.prose-velosecurity li::marker {
+  color: var(--accent);
+}
+
+.prose-velosecurity hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 3rem 0;
+}
+
+.prose-velosecurity em {
+  color: var(--foreground);
+  font-style: italic;
+}
