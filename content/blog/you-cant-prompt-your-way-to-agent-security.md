@@ -1,15 +1,15 @@
 ---
-title: "The Linguistic Von Neumann Bottleneck"
-description: "LLMs repeat the same architectural mistake that gave us buffer overflows 80 years ago. AI agent security requires deterministic policy enforcement outside the model's reasoning loop."
+title: "You Can't Prompt Your Way to Agent Security"
+description: "LLMs repeat the same architectural mistake that gave us buffer overflows. Agent security requires deterministic policy enforcement outside the model's reasoning loop."
 date: "2026-03-23"
 author: "Igor Racic"
 tags: ["dns-aid", "agent-security", "cel", "policy", "architecture"]
 image: "/blog/von-neumann-bottleneck-og.png"
 ---
 
-# The Linguistic Von Neumann Bottleneck
+# You Can't Prompt Your Way to Agent Security
 
-## Why AI Agent Security Can't Live Inside the Model
+## Why Deterministic Policy Beats LLM Inference — Every Time
 
 In 1945, John von Neumann made a design decision that would haunt computing for the next 80 years: **store instructions and data in the same memory.**
 
