@@ -1,6 +1,6 @@
 ---
-title: "The Linguistic Von Neumann Bottleneck: Why AI Agent Security Can't Live Inside the Model"
-description: "LLMs repeat the same architectural mistake that gave us buffer overflows. Agent security requires deterministic policy enforcement outside the model's reasoning loop."
+title: "The Linguistic Von Neumann Bottleneck"
+description: "LLMs repeat the same architectural mistake that gave us buffer overflows 80 years ago. AI agent security requires deterministic policy enforcement outside the model's reasoning loop."
 date: "2026-03-23"
 author: "Igor Racic"
 tags: ["dns-aid", "agent-security", "cel", "policy", "architecture"]
@@ -11,79 +11,84 @@ image: "/blog/von-neumann-bottleneck-og.png"
 
 ## Why AI Agent Security Can't Live Inside the Model
 
-In 1945, John von Neumann made a design decision that would haunt computing for the next 80 years: store instructions and data in the same memory. It was elegant — one bus, one address space, simple hardware. It also gave us buffer overflows, the most exploited vulnerability class in computing history.
+In 1945, John von Neumann made a design decision that would haunt computing for the next 80 years: **store instructions and data in the same memory.**
 
-In 2024, we made the same mistake again.
+Elegant. One bus, one address space, simple hardware.
 
----
+It also gave us buffer overflows — the most exploited vulnerability class in computing history. Decades of patches. ASLR. DEP. NX bit. Stack canaries. All working around one architectural decision.
 
-## The Pattern Repeats
-
-Transformer-based language models collapse system prompts and user input into a single context window. The self-attention mechanism — the mathematical core of every modern LLM — computes Query, Key, and Value vectors for each token and uses softmax normalization to assign semantic weights. Crucially, **no mechanism exists to weight tokens differently based on whether they originated from the system prompt or from user input.**
-
-This is the linguistic von Neumann bottleneck. Instructions and data share the same computational substrate, and the processor — the transformer — cannot tell them apart.
-
-The consequences are predictable, because we've seen them before:
-
-| 1945: Von Neumann Architecture | 2024: Transformer Architecture |
-|---|---|
-| Instructions and data share memory | System prompts and user input share context window |
-| Processor can't distinguish code from data | Attention can't distinguish instructions from input |
-| **Exploit:** Buffer overflow | **Exploit:** Prompt injection |
-| Attacker who controls data controls execution | Attacker who controls input controls reasoning |
-
-When John Backus received the Turing Award in 1978, he described the von Neumann bottleneck as a fundamental limit on how fast and safely programs could execute. Nearly fifty years later, we face the same bottleneck — not for data transfer rates, but for security invariants.
+**In 2024, we made the same mistake again.**
 
 ---
 
-## Why You Can't Fix This Inside the Model
+## The Same Mistake, 80 Years Later
 
-The instinct is to train the model to resist prompt injection. Add more RLHF. Improve alignment. Write better system prompts with "ignore all previous instructions" guardrails.
+Transformer-based language models collapse two fundamentally different things into one shared space: **system prompts** (the developer's instructions) and **user input** (the attacker's surface).
 
-This is the equivalent of trying to prevent buffer overflows by writing more careful C code. It works sometimes. It fails at scale. And it fails precisely when it matters most — when a determined attacker is involved.
+The self-attention mechanism computes Query, Key, and Value vectors for every token, then uses softmax to assign weights. Here's the problem:
 
-Here's the fundamental issue: **security requires determinism, not probability.**
+> **No mechanism exists to weight tokens differently based on whether they came from the system prompt or from user input.**
 
-A policy like "Agent A can never access Agent B's admin methods" is a system invariant. It must hold 100% of the time, across all inputs, in all conditions. It is a boolean — enforced, or not enforced.
+The model literally cannot tell instructions from data. Sound familiar?
 
-An LLM is a stochastic system. Even with perfect alignment training, it produces probabilistic outputs. It might be 99.9% accurate at recognizing and blocking policy violations. But in security, the 0.1% is the entire attack surface.
+**1945:** Instructions and data share memory → buffer overflow
 
-**You cannot enforce a 100% invariant using a system that is 99.9% accurate.** A firewall that blocks 99.9% of attacks isn't secure — it's a firewall with a hole.
+**2024:** Prompts and input share context window → prompt injection
 
-The telecom industry learned this lesson decades ago. Early phone networks used in-band signaling — control signals shared the same channel as voice data. A 2600Hz tone (a whistle from a Cap'n Crunch cereal box) could seize a trunk line because the network couldn't distinguish a control signal from audio data. The fix was SS7 — a physically separate signaling network. **Out-of-band control.**
+Same bottleneck. Same exploit class. Different century.
 
----
-
-## The Fix: Separate the Control Plane
-
-The solution isn't smarter models. It's architecture.
-
-Hardware engineers solved the original von Neumann bottleneck with the NX bit (No-eXecute) — marking memory pages as either writable or executable, never both. Data Execution Prevention. The Harvard architecture in embedded systems goes further: physically separate buses for instructions and data.
-
-The principle is the same every time: **when you can't distinguish instructions from data in a shared channel, you separate the channels.**
-
-For AI agents, this means:
-
-- **The LLM decides what the agent wants to do** — this is the data plane. It's nondeterministic, creative, useful.
-- **A separate system decides whether the agent is allowed to do it** — this is the control plane. It's deterministic, auditable, and non-bypassable.
-
-The model never evaluates security policy. The security policy never enters the model's context window. They operate on architecturally separate substrates.
+When John Backus received the Turing Award in 1978, he called this the "von Neumann bottleneck" — a fundamental architectural limit. We now face the **linguistic** von Neumann bottleneck. Not a bandwidth problem. A security problem.
 
 ---
 
-## What This Looks Like in Practice
+## You Cannot Fix This With Better Training
 
-We built [DNS-AID](https://dns-aid.org) to be this control plane for agent-to-agent communication.
+The instinct is to train the model harder. More RLHF. Better alignment. Smarter system prompts. "Please ignore all previous instructions" guardrails.
 
-### The Data Plane (agents do their thing)
+This is the equivalent of preventing buffer overflows by writing more careful C code. It works sometimes. It fails exactly when a determined attacker is involved.
+
+Here's the core issue:
+
+### Security is a boolean. LLMs are probabilistic.
+
+A policy like *"Agent A can never access Agent B's admin methods"* is a **system invariant**. It holds 100% of the time, or it doesn't hold.
+
+An LLM is a stochastic system. Even perfectly aligned, it produces probabilistic outputs. 99.9% accurate on security decisions sounds impressive — until you realize the 0.1% **is the entire attack surface.**
+
+> **You cannot enforce a 100% invariant using a system that is 99.9% accurate.**
+>
+> A firewall that blocks 99.9% of attacks is a firewall with a hole.
+
+---
+
+## The Telecom Industry Solved This Decades Ago
+
+Early phone networks used **in-band signaling** — control signals shared the same channel as voice data. A 2600Hz tone from a toy whistle could seize a trunk line because the network couldn't distinguish control from audio.
+
+The fix wasn't a better filter. It was **SS7** — a physically separate signaling network. Out-of-band control.
+
+Hardware engineers did the same thing: the **NX bit** (No-eXecute) marks memory pages as writable OR executable, never both. Data Execution Prevention. The Harvard architecture goes further — physically separate buses for instructions and data.
+
+**The principle is always the same: when you can't distinguish instructions from data in a shared channel, you separate the channels.**
+
+---
+
+## Separate the Control Plane from the Data Plane
+
+For AI agents, this means two architecturally separate systems:
+
+### The Data Plane — the LLM does its thing
+
+The model reasons about intent, plans actions, generates responses. This is nondeterministic, creative, and useful. This is what LLMs are brilliant at.
 
 ```
-Agent A (LLM): "I need to call the billing agent to check this invoice"
-     → Constructs MCP request: tools/call("check_invoice", {id: "INV-2847"})
-     → Nondeterministic. Creative. Useful.
+Agent A: "I need to call the billing agent to check this invoice"
+→ Constructs: tools/call("check_invoice", {id: "INV-2847"})
 ```
 
-### The Control Plane (DNS-AID decides if it's allowed)
+### The Control Plane — deterministic infrastructure decides if it's allowed
+
+A separate system — not a prompt, not a model, not inference — evaluates whether the action complies with policy.
 
 ```json
 {
@@ -96,113 +101,124 @@ Agent A (LLM): "I need to call the billing agent to check this invoice"
       {
         "id": "high-trust-only",
         "expression": "request.caller_trust_score >= 0.7",
-        "effect": "deny",
-        "message": "Caller trust score too low"
+        "effect": "deny"
       },
       {
         "id": "approved-domains",
         "expression": "request.caller_domain.endsWith('.infoblox.com')",
-        "effect": "deny",
-        "message": "Only Infoblox agents allowed"
+        "effect": "deny"
       },
       {
         "id": "geo-sanctions",
         "expression": "!(request.geo_country in ['KP', 'IR', 'SY'])",
-        "effect": "deny",
-        "message": "Sanctioned country"
+        "effect": "deny"
       }
     ]
   }
 }
 ```
 
-This policy document is:
+This policy is:
 
-- **Published in DNS** by the agent owner (referenced via SVCB record, like DMARC publishes email policy)
-- **Fetched and cached** by the caller and target independently
-- **Evaluated by a CEL engine** — a Rust-based expression evaluator running in 2 microseconds, not a 500-millisecond LLM inference call
-- **Deterministic** — same input, same output, every time, no temperature, no hallucination
-- **Auditable** — every evaluation produces a log with rule ID, result, context, timestamp
-- **Non-bypassable** — the CEL engine operates outside the agent's reasoning loop. The agent can't "convince" it to make an exception.
+- **Published in DNS** by the agent owner — like DMARC publishes email policy
+- **Evaluated by a CEL engine** — compiled Rust, 2 microseconds, not 500ms LLM inference
+- **Deterministic** — same input, same output, every time. No temperature. No hallucination.
+- **Non-bypassable** — the agent can't "convince" the evaluator to make an exception
 
-### Compare the Two Approaches
-
-**LLM-based security (the bottleneck):**
-```
-System prompt: "You are a security evaluator. Check if this request
-complies with our policy. Trust score must be above 0.7, caller must
-be from an approved domain. Here is the request: {ATTACKER_INPUT}"
-
-→ Rules and attacker input share the SAME CONTEXT WINDOW
-→ Prompt injection can override the rules
-→ Model might "decide" to make an exception
-→ Decision can't be reproduced or audited
-→ 500ms latency, $0.003 per evaluation
-```
-
-**DNS-AID CEL policy (control plane separation):**
-```
-CEL expression: request.caller_trust_score >= 0.7
-Context: { caller_trust_score: 0.3 }
-Result: DENY
-
-→ Expression is compiled code, not natural language
-→ Context is built from observed traffic, not user input
-→ CEL has no "context window" — data and code are separate
-→ Cannot be prompt-injected — there's no prompt
-→ Every decision is deterministic and reproducible
-→ 2µs latency, $0 per evaluation
-```
+**The model never sees the policy. The policy never enters the context window. They operate on architecturally separate substrates.**
 
 ---
 
-## Four Enforcement Layers, Zero LLM Involvement
+## The Difference, Side by Side
 
-[DNS-AID](https://dns-aid.org) doesn't enforce policy at a single point. It enforces at four architectural layers, each catching what the others miss:
+### LLM-Based Security (the bottleneck)
 
-| Layer | Where | What It Does | Deterministic? | LLM? |
-|---|---|---|---|---|
-| **Layer 0: DNS** | DNS resolver | Blocks resolution before TCP connect — rogue agent never gets an IP | ✅ | ❌ |
-| **Layer 1: Caller SDK** | Before request sent | Evaluates policy pre-flight — stops data leakage before it happens | ✅ | ❌ |
-| **Layer 2: Target Middleware** | Before request processed | Mandatory enforcement — works even if caller doesn't cooperate | ✅ | ❌ |
-| **Layer 3: Agent Fabric** | Network proxy | Deep inspection with verified context — source IP, real cert, actual payload | ✅ | ❌ |
+```
+System prompt: "Evaluate if this request complies with policy.
+Trust must be above 0.7. Caller must be approved.
+Here is the request: {ATTACKER_CONTROLLED_INPUT}"
+```
 
-The same CEL policy document governs all four layers. The same expressions evaluate at each point. What changes is the **context**: Layer 1 has self-reported context (the caller tells you who they are). Layer 3 has verified context (the proxy sees the actual traffic). But the policy logic is identical — deterministic, auditable, and completely outside the model.
+- Rules and attacker input share the **same context window**
+- Prompt injection can override the rules
+- Model might "decide" to make an exception
+- Can't reproduce or audit the decision
+- **500ms latency. $0.003 per evaluation.**
+
+### CEL Policy Engine (control plane separation)
+
+```
+Expression: request.caller_trust_score >= 0.7
+Context:    { caller_trust_score: 0.3 }
+Result:     DENY
+```
+
+- Expression is compiled code, not natural language
+- Context built from observed traffic, not user input
+- No "context window" — data and code are architecturally separate
+- Every decision is deterministic and reproducible
+- **2µs latency. $0 per evaluation.**
+
+---
+
+## Four Layers, Zero LLM Involvement
+
+[DNS-AID](https://dns-aid.org) enforces at four architectural layers. Each catches what the others miss:
+
+### Layer 0: DNS — Block before TCP connect
+
+The agent's name doesn't even resolve. Rogue agents never get an IP address. This happens at the DNS resolver — no HTTP connection, no TLS handshake, no data exchanged.
+
+### Layer 1: Caller SDK — Block before sending
+
+The calling agent evaluates the target's policy before sending the request. Stops data leakage before it happens. Prevents the caller from connecting to untrusted targets.
+
+### Layer 2: Target Middleware — Block before processing
+
+The target agent's middleware evaluates policy on every incoming request. Mandatory enforcement — works even if the caller doesn't cooperate or doesn't use the SDK.
+
+### Layer 3: Agent Fabric — Block with verified context
+
+A network proxy intercepts agent traffic and evaluates CEL rules against **verified** context — real source IP, real TLS certificate, actual JSON-RPC payload — not self-reported claims.
+
+**The same CEL policy document governs all four layers.** The same expressions. What changes is the context: Layer 1 trusts the caller's claims. Layer 3 verifies them from traffic.
 
 ---
 
 ## The DMARC Precedent
 
-This isn't a thought experiment. We've solved this exact problem before — for email.
+This isn't theoretical. We solved the identical problem for email.
 
-SMTP lets anyone send email claiming to be anyone. For decades, the industry tried to fix this with spam filters — ML models that classify emails as legitimate or malicious. Probabilistic. Evadable. Full of false positives.
+SMTP lets anyone send email claiming to be anyone. For decades, the fix was spam filters — ML classifying emails as legitimate or malicious. Probabilistic. Evadable. False positives everywhere.
 
-Then DMARC changed the game. The domain owner publishes a policy in DNS: "emails from my domain must pass SPF alignment and DKIM signature verification. If they don't, reject them." The receiving mail server evaluates this deterministically. No ML involved. The policy is a DNS TXT record, not a prompt.
+**DMARC changed the architecture.** The domain owner publishes a policy in DNS:
 
-DMARC didn't make spam filters smarter. It moved authentication from the data plane (email content) to the control plane (DNS policy). It worked because:
+> "Emails from my domain must pass SPF and DKIM. If they don't, reject them."
 
-- Domain owners control their own policy (sovereignty)
-- Evaluation is deterministic (no false positives on policy checks)
-- Deployment is graduated (`p=none` → `p=quarantine` → `p=reject`)
-- No new infrastructure required (DNS already exists everywhere)
+The receiving server evaluates this **deterministically**. No ML. The policy is a DNS TXT record, not a prompt.
 
-[DNS-AID](https://dns-aid.org) follows the same playbook for agents. Agent owners publish CEL policy in DNS. Callers and targets evaluate it deterministically. Deployment starts permissive and tightens over time. DNS is already deployed in every enterprise.
+DMARC succeeded because:
+
+- **Sovereignty** — domain owners control their own policy
+- **Determinism** — no false positives on policy checks
+- **Graduated deployment** — `p=none` → `p=quarantine` → `p=reject`
+- **No new infrastructure** — DNS already exists everywhere
+
+[DNS-AID](https://dns-aid.org) follows the same playbook. Agent owners publish CEL policy in DNS. Evaluation is deterministic. Deployment starts permissive. DNS is already in every enterprise.
 
 ---
 
 ## Identity Without Inference
 
-The original article on the von Neumann bottleneck touches on a critical adjacent problem: **agent identity**. When Agent A calls Agent B, how does B know who A really is?
+There's an adjacent problem: **agent identity**. When Agent A calls Agent B, how does B know who A really is?
 
-The LLM approach: "I am Agent A, trust me." Self-asserted identity inside the data plane — the exact same channel the attacker controls.
+The LLM approach: *"I am Agent A, trust me."* Self-asserted identity inside the data plane — the same channel the attacker controls.
 
 The infrastructure approach: **cryptographic identity outside the model.**
 
-[DNS-AID](https://dns-aid.org) uses three mechanisms, all operating outside the LLM's reasoning:
-
-- **DNSSEC** — the agent's DNS records are cryptographically signed. If the signature doesn't validate, the agent doesn't exist. No LLM decides this — the resolver's DNSSEC validator is deterministic.
-- **DANE/TLSA** — the agent's TLS certificate is bound to its DNS name via TLSA records. Certificate pinning without trusting external PKI. Deterministic validation.
-- **OAuth 2.0 token exchange** (RFC 8693) — agents receive scoped, short-lived tokens with explicit delegation chains. The token carries `sub` (who), `act` (on behalf of), `scope` (what), and `exp` (until when). Cryptographically signed. Deterministically verified. The model never sees the token validation logic.
+- **DNSSEC** — the agent's DNS records are cryptographically signed. Invalid signature = agent doesn't exist. No LLM decides this.
+- **DANE/TLSA** — the agent's TLS certificate is bound to its DNS name. Certificate pinning without external PKI.
+- **OAuth 2.0 token exchange** (RFC 8693) — scoped, short-lived tokens with explicit delegation chains:
 
 ```json
 {
@@ -213,32 +229,30 @@ The infrastructure approach: **cryptographic identity outside the model.**
 }
 ```
 
-This is the confused deputy problem solved at the infrastructure layer. The agent's identity, delegation chain, and permissions are in a signed token — not in a prompt that can be injected.
+The token carries **who** (sub), **on behalf of** (act), **what** (scope), and **until when** (exp). Cryptographically signed. Deterministically verified. The model never sees the validation logic.
+
+This is the confused deputy problem solved at the infrastructure layer — not in a prompt.
 
 ---
 
-## What This Means for Agent Security Decisions
+## The Question to Ask Your Vendor
 
-If you're evaluating how to secure agent-to-agent communication, here's the decision framework:
-
-### Ask your vendor this question:
+If you're evaluating agent security solutions, there's one question that cuts through the noise:
 
 > **"Does your security enforcement involve an LLM in the decision path?"**
 
-If the answer is yes — if they're using a model to classify requests as safe or malicious, to decide whether an agent should be allowed to call another agent, to evaluate whether a prompt is within policy — they have a linguistic von Neumann bottleneck.
+If yes — if they use a model to classify requests, decide agent trust, or evaluate policy compliance — they have a linguistic von Neumann bottleneck. The policy and the attack surface share the same reasoning engine.
 
-The policy and the attack surface share the same reasoning engine. The attacker who controls the input controls the security decision. No amount of guardrails inside the model changes the architecture.
+### The right architecture:
 
-### The right architecture separates the planes:
-
-- **LLMs** reason about intent, plan actions, generate responses. This is what they're brilliant at.
-- **Deterministic infrastructure** enforces identity, trust, and authorization. This is what DNS, CEL, cryptographic signatures, and policy engines are built for.
+- **LLMs** reason about intent and generate responses. Brilliant at this.
+- **Deterministic infrastructure** enforces identity, trust, and authorization. Built for this.
 - **They never share a context window.**
 
-This is how hardware solved buffer overflows (NX bit, DEP). How telecom solved in-band signaling (SS7). How email solved spoofing (DMARC). And how agent communication will solve prompt-injection-as-a-service.
+Hardware solved buffer overflows with the NX bit. Telecom solved in-band signaling with SS7. Email solved spoofing with DMARC.
 
-The von Neumann bottleneck isn't new. The fix isn't new either. Separate the planes.
+The pattern is always the same. **Separate the planes.**
 
 ---
 
-*[DNS-AID](https://dns-aid.org) is an open IETF standard ([draft-mozleywilliams-dnsop-dnsaid](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/)) for DNS-based agent discovery, identity, and policy enforcement. The CEL policy engine, four-layer enforcement model, and SDK are open source at [github.com/infobloxopen/dns-aid-core](https://github.com/infobloxopen/dns-aid-core). Learn more at [dns-aid.org](https://dns-aid.org).*
+*[DNS-AID](https://dns-aid.org) is an open IETF standard ([draft-mozleywilliams-dnsop-dnsaid](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/)) for DNS-based agent discovery, identity, and policy enforcement. The CEL policy engine and four-layer enforcement model are open source at [github.com/infobloxopen/dns-aid-core](https://github.com/infobloxopen/dns-aid-core).*
