@@ -62,6 +62,7 @@ const caseStudies = [
 ];
 
 const navLinks = [
+  { name: "Products", href: "/products", hasDropdown: false },
   { name: "Services", href: "#services", hasDropdown: true },
   { name: "Case Studies", href: "#case-studies", hasDropdown: true },
   { name: "Demos", href: "#demos", hasDropdown: false },
