@@ -12,9 +12,9 @@ const footerLinks = {
     { name: "Cloud Consulting", href: "#services" },
   ],
   Company: [
-    { name: "About Us", href: "#about" },
+    { name: "About", href: "/founder" },
     { name: "Case Studies", href: "#case-studies" },
-    { name: "Blog", href: "#blog" },
+    { name: "Blog", href: "/blog" },
     { name: "Careers", href: "#" },
   ],
   Resources: [

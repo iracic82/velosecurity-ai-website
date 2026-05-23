@@ -131,7 +131,7 @@ export function EnforcementLayers() {
           </p>
           <div className="bg-background/60 rounded-lg p-4 font-mono text-sm space-y-1">
             <p className="text-muted">
-              <span className="text-accent-secondary">// Block sandbox agents from calling production</span>
+              <span className="text-accent-secondary">{"// Block sandbox agents from calling production"}</span>
             </p>
             <p>
               <span className="text-accent">!</span>
@@ -142,7 +142,7 @@ export function EnforcementLayers() {
               <span className="text-foreground">)</span>
             </p>
             <p className="text-muted mt-3">
-              <span className="text-accent-secondary">// Restrict PII tools to authorized callers only</span>
+              <span className="text-accent-secondary">{"// Restrict PII tools to authorized callers only"}</span>
             </p>
             <p>
               <span className="text-accent">!</span>

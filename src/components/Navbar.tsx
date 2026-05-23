@@ -68,7 +68,7 @@ const navLinks = [
   { name: "Demos", href: "#demos", hasDropdown: false },
   { name: "Blog", href: "/blog", hasDropdown: false },
   { name: "Community", href: "#community", hasDropdown: false },
-  { name: "About Us", href: "#about", hasDropdown: false },
+  { name: "About", href: "/founder", hasDropdown: false },
 ];
 
 export function Navbar() {
