@@ -46,9 +46,9 @@ const links = [
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/igor-racic",
+    href: "https://www.linkedin.com/in/iracic",
     icon: Linkedin,
-    handle: "in/igor-racic",
+    handle: "in/iracic",
   },
   {
     label: "GitHub",
