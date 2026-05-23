@@ -60,7 +60,7 @@ export function ProblemStatement() {
           </h2>
           <p className="text-muted text-lg max-w-2xl leading-relaxed">
             Dozens of agents across teams. No inventory. No identity. No
-            control. Your CISO can't see what's talking to what.
+            control. Your CISO can&apos;t see what&apos;s talking to what.
           </p>
         </motion.div>
 
