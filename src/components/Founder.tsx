@@ -7,14 +7,11 @@ import {
   Mail,
   Twitter,
   ArrowRight,
-  Shield,
-  Network,
-  Brain,
-  Code2,
-  Cloud,
-  Lock,
   Briefcase,
   PenLine,
+  MapPin,
+  Radio,
+  Lightbulb,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -24,69 +21,19 @@ type RecentPost = {
   date: string;
 };
 
-// Edit this file to update the founder bio, journey, expertise, and links.
-// Content is intentionally co-located with markup so a single edit covers both.
+// Edit this file to update founder content. Single source of truth.
 
-const journey = [
-  {
-    period: "2025 — Now",
-    role: "Founder",
-    org: "VeloSecurity AI",
-    detail:
-      "Building deterministic security infrastructure for AI agents. Policy enforcement outside the model's reasoning loop — DNS, identity, and CEL-based control planes that don't depend on prompt-time inference.",
-  },
-  {
-    period: "Previously",
-    role: "Multi-Cloud Networking & Security",
-    org: "Enterprise Practitioner",
-    detail:
-      "Years of hands-on work across multi-cloud networking, zero trust access, and the operational reality of running secure infrastructure at scale. Published technical writing on MCN, NaaS trade-offs, DPI vs. reverse proxy, and the limits of Layer 3 in cloud.",
-  },
-  {
-    period: "Always",
-    role: "Writer & Engineer",
-    org: "highvelocitynetworking.com",
-    detail:
-      "Long-form technical writing on networking, security architecture, and the patterns that survive contact with production. Python tooling for network operations problems that don't have an off-the-shelf answer.",
-  },
+const credentialChips = [
+  "20 years across networking, security & cloud",
+  "Patent filed · DNS-AID",
+  "Ex-Prosimo (acq. Palo Alto), AWS, VMware, Aruba",
 ];
 
-const expertise = [
+const flagshipLinks = [
+  { label: "dns-aid.org", href: "https://dns-aid.org" },
   {
-    icon: Shield,
-    title: "Agent Security",
-    blurb:
-      "Deterministic policy enforcement for AI agents. DNS-AID, CEL evaluators, control-plane / data-plane separation.",
-  },
-  {
-    icon: Network,
-    title: "Multi-Cloud Networking",
-    blurb:
-      "Transit architectures, ZTNA, SD-WAN, application-aware routing across AWS / Azure / GCP.",
-  },
-  {
-    icon: Lock,
-    title: "Zero Trust",
-    blurb:
-      "Identity-first access, short-lived credentials, OAuth 2.0 token exchange, the confused deputy problem.",
-  },
-  {
-    icon: Cloud,
-    title: "Cloud Architecture",
-    blurb:
-      "Production-grade cloud designs that hold up to security review and a 3am page.",
-  },
-  {
-    icon: Brain,
-    title: "AI / Agentic Systems",
-    blurb:
-      "Where LLMs belong in the stack — and where they absolutely do not. Tooling, evals, and guardrails.",
-  },
-  {
-    icon: Code2,
-    title: "Python & Tooling",
-    blurb:
-      "Operational scripts, data analysis, and small composable tools for network and security teams.",
+    label: "github.com/infobloxopen/dns-aid-core",
+    href: "https://github.com/infobloxopen/dns-aid-core",
   },
 ];
 
@@ -99,9 +46,9 @@ const links = [
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/igorracic/",
+    href: "https://www.linkedin.com/in/igor-racic",
     icon: Linkedin,
-    handle: "in/igorracic",
+    handle: "in/igor-racic",
   },
   {
     label: "GitHub",
@@ -125,19 +72,20 @@ export function Founder({ recent }: { recent: RecentPost[] }) {
       <div className="absolute top-1/4 -left-32 w-[420px] h-[420px] bg-accent/[0.06] rounded-full blur-[140px]" />
       <div className="absolute bottom-1/4 -right-32 w-[420px] h-[420px] bg-accent-secondary/[0.06] rounded-full blur-[140px]" />
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* HERO */}
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-24"
+          className="mb-20"
         >
           <p className="section-label mb-4">Founder</p>
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
-            Igor <span className="gradient-text-static">Racic</span>
+            Hi, I&apos;m <span className="gradient-text-static">Igor</span>.
           </h1>
-          <p className="text-foreground text-xl sm:text-2xl leading-relaxed max-w-2xl mb-6">
+
+          <p className="text-foreground text-xl sm:text-2xl leading-relaxed mb-4">
             I&apos;m building{" "}
             <Link
               href="/"
@@ -147,83 +95,126 @@ export function Founder({ recent }: { recent: RecentPost[] }) {
             </Link>{" "}
             — deterministic security infrastructure for AI agents.
           </p>
-          <p className="text-muted text-base sm:text-lg leading-relaxed max-w-2xl">
-            Networking and security practitioner. I write about the architecture
-            of trust, the limits of LLM-based controls, and the patterns that
-            survive contact with production.
+
+          <p className="flex items-center gap-2 text-sm text-muted/70 mb-7">
+            <MapPin className="w-3.5 h-3.5" />
+            Oslo · working across EMEA &amp; AMER
           </p>
+
+          <div className="flex flex-wrap gap-2">
+            {credentialChips.map((c) => (
+              <span
+                key={c}
+                className="tag px-3 py-1.5 rounded-md bg-accent/[0.08] text-accent/80 border border-accent/10"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
         </motion.section>
 
-        {/* JOURNEY / TIMELINE */}
-        <Section label="Journey" icon={Briefcase} title="Work, in brief">
-          <div className="relative pl-6 sm:pl-8">
-            {/* vertical line */}
-            <div className="absolute left-0 top-2 bottom-2 w-px bg-gradient-to-b from-accent/40 via-accent-secondary/30 to-transparent" />
-            <div className="space-y-10">
-              {journey.map((j, i) => (
-                <motion.div
-                  key={j.period}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{
-                    duration: 0.5,
-                    delay: i * 0.08,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="relative"
+        {/* WHY */}
+        <Section label="Why I'm building this" icon={Lightbulb} title="Agents need infrastructure, not better prompts">
+          <p className="text-muted text-lg leading-relaxed mb-5">
+            Every wave of cloud, mobile and IoT, I&apos;ve watched the same
+            pattern: a powerful new compute model ships first, and the security
+            and governance infrastructure shows up years later — at much higher
+            cost.
+          </p>
+          <p className="text-muted text-lg leading-relaxed mb-5">
+            AI agents are the next wave, and we&apos;re repeating the mistake.
+            Most &quot;agent security&quot; today is a prompt asking an LLM to
+            behave. That&apos;s not a control plane — it&apos;s a wish.
+          </p>
+          <p className="text-muted text-lg leading-relaxed">
+            VeloSecurity AI exists to put deterministic policy enforcement —
+            DNS-native identity, CEL evaluators, control-plane / data-plane
+            separation — between agents and the systems they touch.{" "}
+            <strong className="text-foreground">
+              The architecture has to be infrastructure. The infrastructure has
+              to be deterministic.
+            </strong>
+          </p>
+        </Section>
+
+        {/* FLAGSHIP */}
+        <Section label="What I'm shipping" icon={Radio} title="DNS-AID">
+          <div className="card-glow rounded-2xl p-7 sm:p-8">
+            <p className="text-sm text-muted/80 mb-4">
+              Infoblox · Patent filed · IETF draft contributor
+            </p>
+            <p className="text-muted leading-relaxed mb-4">
+              At Infoblox I lead{" "}
+              <a
+                href="https://dns-aid.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent hover:text-accent/80 transition-colors"
+              >
+                DNS-AID
+              </a>{" "}
+              — an IETF-based standard for DNS-native agent identification and
+              discovery. Built the full reference platform end-to-end: Python
+              core library, CLI, MCP server, FastAPI directory, Next.js
+              frontend, AWS serverless. Governance via DNSSEC, DANE/TLSA, JWS
+              and CEL policy.
+            </p>
+            <p className="text-muted leading-relaxed mb-6">
+              VeloSecurity AI builds on this foundation — taking the same
+              deterministic primitives and making them deployable for any
+              enterprise running agents in production.
+            </p>
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
+              {flagshipLinks.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-accent/80 hover:text-accent transition-colors"
                 >
-                  {/* node */}
-                  <div className="absolute -left-[28px] sm:-left-[36px] top-1.5 w-3 h-3 rounded-full bg-accent shadow-[0_0_18px_rgba(0,212,255,0.5)]" />
-                  <p className="tag text-accent mb-2">{j.period}</p>
-                  <h3 className="font-display text-xl sm:text-2xl font-bold mb-1">
-                    {j.role}
-                  </h3>
-                  <p className="text-sm text-muted/80 mb-3">{j.org}</p>
-                  <p className="text-muted leading-relaxed max-w-2xl">
-                    {j.detail}
-                  </p>
-                </motion.div>
+                  {l.label}
+                  <ArrowRight className="w-3 h-3" />
+                </a>
               ))}
             </div>
           </div>
         </Section>
 
-        {/* EXPERTISE */}
-        <Section label="Expertise" icon={Brain} title="What I work on">
-          <div className="grid sm:grid-cols-2 gap-5">
-            {expertise.map((e, i) => (
-              <motion.div
-                key={e.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{
-                  duration: 0.45,
-                  delay: i * 0.05,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="card-glow rounded-2xl p-6"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 shrink-0 rounded-lg bg-accent/[0.08] border border-accent/10 flex items-center justify-center">
-                    <e.icon className="w-5 h-5 text-accent" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-base font-bold mb-1.5">
-                      {e.title}
-                    </h3>
-                    <p className="text-sm text-muted leading-relaxed">
-                      {e.blurb}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+        {/* BACKGROUND — narrative, not a CV */}
+        <Section label="Background" icon={Briefcase} title="How I got here">
+          <div className="space-y-4 text-muted leading-relaxed text-lg">
+            <p>
+              I started in service provider networks — IP/MPLS cores, microwave
+              backhaul, the unsexy plumbing that everything else runs on top of.
+              Then a decade of multi-cloud and SD-WAN at{" "}
+              <span className="text-foreground/90">
+                Airbus, VMware, AWS, Aruba and Prosimo
+              </span>{" "}
+              (which Palo Alto acquired in 2025) — building the architectures
+              that connect AWS, Azure and GCP for enterprises that can&apos;t
+              afford to get it wrong.
+            </p>
+            <p>
+              Along the way I&apos;ve influenced over{" "}
+              <strong className="text-foreground">€150M</strong> in deal value,
+              presented at VMworld, built and led pre-sales teams across EMEA,
+              and earned the rare distinction of CCDE alongside AWS Professional
+              and Azure Expert. None of that matters on its own. What it adds up
+              to is a pattern:{" "}
+              <strong className="text-foreground">
+                I keep ending up where networking, security and emerging compute
+                models meet.
+              </strong>
+            </p>
+            <p>
+              AI agents are where they meet next. Hence DNS-AID. Hence
+              VeloSecurity AI.
+            </p>
           </div>
         </Section>
 
-        {/* SELECTED WRITING */}
+        {/* WRITING */}
         <Section label="Writing" icon={PenLine} title="Selected posts">
           <div className="space-y-3">
             {recent.map((post, i) => (
@@ -271,10 +262,11 @@ export function Founder({ recent }: { recent: RecentPost[] }) {
         </Section>
 
         {/* CONNECT */}
-        <Section label="Connect" icon={Mail} title="Get in touch">
-          <p className="text-muted leading-relaxed max-w-2xl mb-8">
-            If you&apos;re working on agent security, multi-cloud networking, or
-            anywhere the two intersect — I&apos;d like to hear from you.
+        <Section label="Connect" icon={Mail} title="Talk to me">
+          <p className="text-muted leading-relaxed mb-8">
+            If you&apos;re running agents in production, evaluating governance,
+            or just want to argue about whether DNS belongs in the AI stack —
+            I&apos;d like to hear from you.
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             {links.map((l) => (
@@ -324,13 +316,13 @@ function Section({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-      className="mb-24"
+      className="mb-20"
     >
       <div className="flex items-center gap-3 mb-3">
         <Icon className="w-3.5 h-3.5 text-accent" />
         <p className="section-label">{label}</p>
       </div>
-      <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-10">
+      <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight mb-8">
         <span className="gradient-text-static">{title}</span>
       </h2>
       {children}
