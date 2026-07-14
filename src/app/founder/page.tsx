@@ -3,13 +3,13 @@ import { getAllPosts } from "@/lib/blog";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Igor Racic — Founder, VeloSecurity AI",
+  title: "Founder — VeloSecurity AI",
   description:
-    "Founder of VeloSecurity AI. Multi-cloud networking, agent security, and the architecture of trust. Writing, work, and what I'm building.",
+    "The founder of VeloSecurity AI. Multi-cloud networking, agent security, and the architecture of trust. Writing, work, and what we're building.",
   openGraph: {
-    title: "Igor Racic — Founder, VeloSecurity AI",
+    title: "Founder — VeloSecurity AI",
     description:
-      "Founder of VeloSecurity AI. Multi-cloud networking, agent security, and the architecture of trust.",
+      "The founder of VeloSecurity AI. Multi-cloud networking, agent security, and the architecture of trust.",
     type: "profile",
   },
 };
