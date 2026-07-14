@@ -82,7 +82,7 @@ export function Founder({ recent }: { recent: RecentPost[] }) {
         >
           <p className="section-label mb-4">Founder</p>
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
-            Hi, I&apos;m <span className="gradient-text-static">Igor</span>.
+            Meet the <span className="gradient-text-static">founder</span>.
           </h1>
 
           <p className="text-foreground text-xl sm:text-2xl leading-relaxed mb-4">
