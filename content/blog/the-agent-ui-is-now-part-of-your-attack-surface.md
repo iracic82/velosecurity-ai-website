@@ -21,29 +21,44 @@ The 2026-07-28 spec is that answer. This post covers what it actually changes, w
 
 ## Why MCP Apps Exist at All
 
-Ask an agent which of your DNS zones still have DNSSEC disabled. In most deployments today the tool returns a few hundred zones as JSON. The model reads all of it. Then it writes you an essay about it, token by token. You paid inference costs for something that should have been a sortable table.
+Ask an agent which of your container images ship a vulnerable OpenSSL build. In most deployments today the scanner returns a few hundred images as JSON. The model reads all of it. Then it writes you an essay about it, token by token. You paid inference costs for something that should have been a sortable table.
 
 MCP Apps fixes this. The tool response references an HTML resource. The host renders it directly in a sandboxed frame. The user gets an interactive view inside the chat and the model no longer has to narrate the interface. The traditional pipeline of JSON to LLM narration to user is gone. Anthropic's engineers demoed a PDF viewer at the MCP Dev Summit this year where users fill fields, stamp documents and sign without leaving the chat window.
 
 The difference is easiest to see side by side:
 
-```text
-Traditional                MCP Apps
-
-Tool                       Tool
-  |                          |
-JSON                       Structured content
-  |                          |
-LLM narrates               Sandboxed app renders
-  |                          |
-Tokens stream              Human interacts
-  |                          |
-Human reads                     ^
-                                |
-                          Consent path
-                          Audit log
-                          Gateway policy
-```
+<svg viewBox="0 0 800 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Traditional narration pipeline compared with the MCP Apps rendering pipeline" style="width:100%;height:auto;max-width:760px;display:block;margin:2rem auto;">
+  <defs>
+    <marker id="arrGray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker>
+    <marker id="arrCyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#00d4ff"/></marker>
+    <marker id="arrPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
+  </defs>
+  <text x="170" y="36" fill="#64748b" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" letter-spacing="1">TRADITIONAL</text>
+  <text x="470" y="36" fill="#00d4ff" font-size="15" font-weight="700" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" letter-spacing="1">MCP APPS</text>
+  <g font-family="ui-sans-serif,system-ui,sans-serif" font-size="14" text-anchor="middle">
+    <rect x="70" y="58" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#334155"/><text x="170" y="84" fill="#94a3b8">Tool</text>
+    <line x1="170" y1="100" x2="170" y2="126" stroke="#475569" stroke-width="1.5" marker-end="url(#arrGray)"/>
+    <rect x="70" y="130" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#334155"/><text x="170" y="156" fill="#94a3b8">JSON</text>
+    <line x1="170" y1="172" x2="170" y2="198" stroke="#475569" stroke-width="1.5" marker-end="url(#arrGray)"/>
+    <rect x="70" y="202" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#334155"/><text x="170" y="228" fill="#94a3b8">LLM narrates</text>
+    <line x1="170" y1="244" x2="170" y2="270" stroke="#475569" stroke-width="1.5" marker-end="url(#arrGray)"/>
+    <rect x="70" y="274" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#334155"/><text x="170" y="300" fill="#94a3b8">Tokens stream</text>
+    <line x1="170" y1="316" x2="170" y2="342" stroke="#475569" stroke-width="1.5" marker-end="url(#arrGray)"/>
+    <rect x="70" y="346" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#334155"/><text x="170" y="372" fill="#94a3b8">Human reads</text>
+    <rect x="370" y="58" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#00d4ff" stroke-opacity="0.55"/><text x="470" y="84" fill="#e2e8f0">Tool</text>
+    <line x1="470" y1="100" x2="470" y2="150" stroke="#00d4ff" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#arrCyan)"/>
+    <rect x="370" y="154" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#00d4ff" stroke-opacity="0.55"/><text x="470" y="180" fill="#e2e8f0">Structured content</text>
+    <line x1="470" y1="196" x2="470" y2="246" stroke="#00d4ff" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#arrCyan)"/>
+    <rect x="370" y="250" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#00d4ff" stroke-opacity="0.55"/><text x="470" y="276" fill="#e2e8f0">Sandboxed app renders</text>
+    <line x1="470" y1="292" x2="470" y2="342" stroke="#00d4ff" stroke-width="1.5" stroke-opacity="0.7" marker-end="url(#arrCyan)"/>
+    <rect x="370" y="346" width="200" height="42" rx="8" fill="#0b0f1a" stroke="#00d4ff" stroke-opacity="0.55"/><text x="470" y="372" fill="#e2e8f0">Human interacts</text>
+    <rect x="614" y="216" width="166" height="110" rx="10" fill="#0b0f1a" stroke="#7c3aed" stroke-opacity="0.7"/>
+    <text x="697" y="248" fill="#c4b5fd" font-size="13">Consent path</text>
+    <text x="697" y="274" fill="#c4b5fd" font-size="13">Audit log</text>
+    <text x="697" y="300" fill="#c4b5fd" font-size="13">Gateway policy</text>
+    <line x1="614" y1="271" x2="578" y2="271" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrPurple)"/>
+  </g>
+</svg>
 
 Faster and cheaper with a better UX. That part everyone gets. The security architecture underneath is what teams are about to miss.
 
@@ -57,11 +72,11 @@ Here is what that looks like on the wire. One self-contained request. No handsha
 POST /mcp HTTP/1.1
 MCP-Protocol-Version: 2026-07-28
 Mcp-Method: tools/call
-Mcp-Name: audit_dns_zones
+Mcp-Name: scan_images
 Content-Type: application/json
 
 {"jsonrpc":"2.0","id":1,"method":"tools/call",
- "params":{"name":"audit_dns_zones","arguments":{"scope":"prod"}}}
+ "params":{"name":"scan_images","arguments":{"registry":"prod"}}}
 ```
 
 The operation is right there in the headers. A gateway can rate-limit `tools/call` for one tenant without parsing the body. Try doing that when the interesting bits live inside a session pinned to instance number three.
@@ -72,27 +87,18 @@ Each of these changes reads like an operations improvement. Together they are so
 
 The failure patterns with Apps are consistent and Anthropic's own engineers walked through most of them at the MCP Dev Summit this year. None of them are exotic. All of them come from treating the app as a frontend problem instead of a data flow problem.
 
-### The three fields go to three different places
+### One tool result, three audiences
 
-A tool result carries `content`, `structuredContent` and `_meta`. They are not interchangeable:
-
-```text
-Tool result
-  ├─ content            →  model      one line of context
-  ├─ structuredContent  →  app        typed data to render
-  └─ _meta              →  app only   IDs and plumbing, the model never sees it
-```
-
-Take that DNSSEC audit tool. A correct result looks like this:
+Look at what that image scanner actually returns:
 
 ```json
 {
   "content": [
-    { "type": "text", "text": "Displayed DNSSEC audit: 41 of 380 zones unsigned" }
+    { "type": "text", "text": "Displayed scan results: 41 of 380 images ship a vulnerable OpenSSL" }
   ],
   "structuredContent": {
     "total": 380,
-    "unsigned": [ { "zone": "legacy-corp.example", "since": "2024-11-02" } ]
+    "affected": [ { "image": "payments-api:2.4.1", "openssl": "3.0.2" } ]
   },
   "_meta": {
     "viewId": "9f2c1a",
@@ -101,9 +107,38 @@ Take that DNSSEC audit tool. A correct result looks like this:
 }
 ```
 
-The model gets one sentence. The app gets the full dataset to render. The plumbing stays invisible. Here is the detail almost everyone misses: if `content` is present, `structuredContent` is hidden from the model entirely.
+One result, three audiences. Each field travels to a different destination:
 
-This is not plumbing trivia. It is a security boundary. Put the full zone list in `content` and you have flooded model context with data it did not need. Put a customer record in `_meta` thinking it is "just metadata" and the app that needed it renders an empty table. The bugs this produces are quiet and hard to spot, which is the worst kind.
+<svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Routing of content to the model and structuredContent plus meta to the app" style="width:100%;height:auto;max-width:760px;display:block;margin:2rem auto;">
+  <defs>
+    <marker id="fArrCyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#00d4ff"/></marker>
+    <marker id="fArrPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
+  </defs>
+  <rect x="40" y="44" width="240" height="228" rx="12" fill="#0b0f1a" stroke="#334155"/>
+  <text x="160" y="76" fill="#e2e8f0" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif">Tool result</text>
+  <g font-family="ui-monospace,Menlo,monospace" font-size="13" text-anchor="middle">
+    <rect x="62" y="96" width="196" height="36" rx="6" fill="#0d1526" stroke="#1e3a4a"/><text x="160" y="119" fill="#00d4ff">content</text>
+    <rect x="62" y="152" width="196" height="36" rx="6" fill="#0d1526" stroke="#1e3a4a"/><text x="160" y="175" fill="#00d4ff">structuredContent</text>
+    <rect x="62" y="208" width="196" height="36" rx="6" fill="#0d1526" stroke="#1e3a4a"/><text x="160" y="231" fill="#00d4ff">_meta</text>
+  </g>
+  <rect x="580" y="60" width="180" height="56" rx="10" fill="#0b0f1a" stroke="#00d4ff" stroke-opacity="0.6"/>
+  <text x="670" y="94" fill="#e2e8f0" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif">Model</text>
+  <rect x="580" y="170" width="180" height="86" rx="10" fill="#0b0f1a" stroke="#7c3aed" stroke-opacity="0.7"/>
+  <text x="670" y="219" fill="#e2e8f0" font-size="14" font-weight="600" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif">App</text>
+  <g font-family="ui-sans-serif,system-ui,sans-serif" font-size="12">
+    <line x1="258" y1="114" x2="576" y2="90" stroke="#00d4ff" stroke-width="1.5" stroke-opacity="0.8" marker-end="url(#fArrCyan)"/>
+    <text x="415" y="88" fill="#64748b" text-anchor="middle">one line of context</text>
+    <line x1="258" y1="170" x2="576" y2="200" stroke="#7c3aed" stroke-width="1.5" stroke-opacity="0.9" marker-end="url(#fArrPurple)"/>
+    <text x="415" y="172" fill="#64748b" text-anchor="middle">typed data to render</text>
+    <line x1="258" y1="226" x2="576" y2="236" stroke="#7c3aed" stroke-width="1.5" stroke-opacity="0.9" marker-end="url(#fArrPurple)"/>
+    <text x="415" y="248" fill="#64748b" text-anchor="middle">internal plumbing</text>
+    <text x="400" y="302" fill="#64748b" text-anchor="middle" font-style="italic">_meta never reaches the model</text>
+  </g>
+</svg>
+
+The single line in `content` is everything the model sees. The dataset in `structuredContent` is what the app renders. The view ID in `_meta` stays in the app layer and never enters model context.
+
+Getting the split wrong is how apps leak. Dump the full image list into `content` and you have flooded the model with data nobody asked it to read. Park a customer record in `_meta` because it looked like metadata and the app that needed it renders an empty table. And the quirk that catches almost every first-time builder: the moment `content` is present, the model stops seeing `structuredContent` entirely. These bugs are quiet. Nothing crashes. The wrong audience just gets the wrong data.
 
 ### The token economics changed and pricing assumptions did not
 
