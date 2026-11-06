@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif">
+  <title>One request, two decisions: the gateway checks the key, Switchyard picks the model, F5's endpoint picker picks the replica</title>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#5eead4"/></marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#a78bfa"/></marker>
+    <marker id="c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#84cc16"/></marker>
+  </defs>
+  <rect width="1000" height="640" rx="18" fill="#0b0f16"/>
+
+  <!-- BNK zone -->
+  <rect x="190" y="24" width="400" height="592" rx="16" fill="rgba(228,0,43,.07)" stroke="rgba(228,0,43,.5)" stroke-dasharray="6 6"/>
+  <text x="210" y="54" fill="#94a3b8" font-size="15" font-weight="700" letter-spacing="1.5">F5 BIG-IP NEXT FOR KUBERNETES</text>
+  <!-- pools zone -->
+  <rect x="620" y="24" width="360" height="592" rx="16" fill="rgba(132,204,22,.06)" stroke="rgba(132,204,22,.45)" stroke-dasharray="6 6"/>
+  <text x="640" y="54" fill="#94a3b8" font-size="15" font-weight="700" letter-spacing="1.5">MODEL POOLS</text>
+
+  <!-- agent -->
+  <rect x="16" y="300" width="150" height="80" rx="12" fill="#121826" stroke="#475569"/>
+  <text x="91" y="335" fill="#e2e8f0" font-size="21" font-weight="700" text-anchor="middle">Agent</text>
+  <text x="91" y="361" fill="#94a3b8" font-size="16" text-anchor="middle">model: auto</text>
+
+  <!-- switchyard -->
+  <rect x="215" y="80" width="350" height="104" rx="12" fill="#121826" stroke="#22d3ee" stroke-width="2"/>
+  <text x="390" y="114" fill="#22d3ee" font-size="16" font-weight="700" text-anchor="middle">DECISION 1 · WHICH MODEL</text>
+  <text x="390" y="143" fill="#e2e8f0" font-size="21" font-weight="700" text-anchor="middle">NVIDIA NeMo Switchyard</text>
+  <text x="390" y="169" fill="#94a3b8" font-size="16" text-anchor="middle">asks a judge (Nemotron)</text>
+
+  <!-- gateway -->
+  <rect x="215" y="270" width="350" height="140" rx="12" fill="#121826" stroke="#f43f5e" stroke-width="2"/>
+  <text x="390" y="304" fill="#e2e8f0" font-size="21" font-weight="700" text-anchor="middle">AI gateway</text>
+  <text x="390" y="332" fill="#94a3b8" font-size="16" text-anchor="middle">guardrail in TMM</text>
+  <text x="390" y="356" fill="#94a3b8" font-size="16" text-anchor="middle">key · scope · token budget</text>
+  <text x="390" y="380" fill="#fda4af" font-size="16" text-anchor="middle">scope checked again after</text>
+  <text x="390" y="400" fill="#fda4af" font-size="16" text-anchor="middle">the model is chosen</text>
+
+  <!-- bridge -->
+  <rect x="215" y="490" width="350" height="96" rx="12" fill="#121826" stroke="#475569"/>
+  <text x="390" y="525" fill="#e2e8f0" font-size="21" font-weight="700" text-anchor="middle">Pool bridge</text>
+  <text x="390" y="551" fill="#94a3b8" font-size="16" text-anchor="middle">asks the picker, as TMM would,</text>
+  <text x="390" y="573" fill="#94a3b8" font-size="16" text-anchor="middle">then forwards to that pod</text>
+
+  <!-- picker -->
+  <rect x="645" y="80" width="310" height="104" rx="12" fill="#121826" stroke="#a78bfa" stroke-width="2"/>
+  <text x="800" y="114" fill="#a78bfa" font-size="16" font-weight="700" text-anchor="middle">DECISION 2 · WHICH REPLICA</text>
+  <text x="800" y="143" fill="#e2e8f0" font-size="21" font-weight="700" text-anchor="middle">F5 endpoint picker</text>
+  <text x="800" y="169" fill="#94a3b8" font-size="16" text-anchor="middle">queue · KV cache · 0–2 ms</text>
+
+  <!-- pools -->
+  <rect x="690" y="232" width="265" height="64" rx="12" fill="#121826" stroke="#3fb950" stroke-width="2"/>
+  <text x="822" y="261" fill="#e2e8f0" font-size="20" font-weight="700" text-anchor="middle">Small model</text>
+  <text x="822" y="284" fill="#94a3b8" font-size="15" text-anchor="middle">2 replicas</text>
+  <rect x="690" y="314" width="265" height="64" rx="12" fill="#121826" stroke="#eab308" stroke-width="2"/>
+  <text x="822" y="343" fill="#e2e8f0" font-size="20" font-weight="700" text-anchor="middle">Large model</text>
+  <text x="822" y="366" fill="#94a3b8" font-size="15" text-anchor="middle">llm-d vLLM simulator</text>
+  <rect x="690" y="396" width="265" height="84" rx="12" fill="#121826" stroke="#84cc16" stroke-width="2"/>
+  <text x="822" y="426" fill="#e2e8f0" font-size="20" font-weight="700" text-anchor="middle">NVIDIA Dynamo</text>
+  <text x="822" y="449" fill="#94a3b8" font-size="15" text-anchor="middle">workers on simulated H100s,</text>
+  <text x="822" y="469" fill="#94a3b8" font-size="15" text-anchor="middle">serve the worker named</text>
+  <rect x="690" y="522" width="265" height="64" rx="12" fill="#121826" stroke="#84cc16"/>
+  <text x="822" y="551" fill="#e2e8f0" font-size="20" font-weight="700" text-anchor="middle">NATS</text>
+  <text x="822" y="574" fill="#94a3b8" font-size="15" text-anchor="middle">Dynamo KV-cache events</text>
+
+  <!-- flows: request -->
+  <g fill="none" stroke-width="2.5">
+    <path d="M166 340 H212" stroke="#5eead4" marker-end="url(#a)"/>
+    <path d="M360 270 V187" stroke="#5eead4" marker-end="url(#a)"/>
+    <path d="M420 184 V267" stroke="#5eead4" marker-end="url(#a)"/>
+    <path d="M390 410 V487" stroke="#5eead4" marker-end="url(#a)"/>
+    <!-- bridge to pods -->
+    <path d="M565 538 H660 V264 H687" stroke="#5eead4" marker-end="url(#a)"/>
+    <path d="M660 346 H687" stroke="#5eead4" marker-end="url(#a)"/>
+    <path d="M660 438 H687" stroke="#5eead4" marker-end="url(#a)"/>
+    <!-- bridge asks picker -->
+    <path d="M565 512 H612 V132 H642" stroke="#a78bfa" stroke-dasharray="7 6" marker-end="url(#b)"/>
+    <!-- NATS events to picker -->
+    <path d="M690 554 H672 Q672 554 672 540 V190" stroke="#84cc16" stroke-dasharray="3 5" marker-end="url(#c)" opacity=".9"/>
+  </g>
+  <text x="348" y="232" fill="#94a3b8" font-size="15" text-anchor="end">ext_proc</text>
+  <text x="600" y="215" fill="#a78bfa" font-size="15" font-weight="700" text-anchor="end">which pod?</text>
+</svg>
